@@ -1,12 +1,7 @@
 import React, {Component} from 'react';
 import {Segment, Header, Input, Button, List} from 'semantic-ui-react';
 import { Todos } from '../models/todos';
-
-const Style={
-    done: {
-        textDecoration:'line-through'
-    }
-}
+import TodoItem from '../components/TodoItem';
 
 export default class TodoList extends Component {
     constructor(props) {
@@ -29,9 +24,9 @@ export default class TodoList extends Component {
         });
     }
 
-    toggleDones = (idx) => {
+    toggleDones = (item) => {
         const {todos} = this.state;
-        todos[idx].done = !todos[idx].done;
+        item.done = !item.done;
         this.setState({
             todos:todos
         });
@@ -54,20 +49,10 @@ export default class TodoList extends Component {
                     <List divided selection size='huge'>
                         {todos.map((item, idx) => {
                             return (
-                                <List.Item
-                                    style={item.done? Style.done:{}}
-                                >
-                                    <Button
-                                    floated='left'
-                                    basic = {!item.done}
-                                    color = {item.done && 'teal'}
-                                    onClick={()=>{this.toggleDones(idx)}}
-                                    size='big'
-                                    >
-                                    Done
-                                    </Button>
-                                    {item.todo}
-                                </List.Item>
+                                <TodoItem
+                                    item={item}
+                                    toggle={this.toggleDones}
+                                />
                                 )
                         })}
                     </List>
