@@ -1,40 +1,15 @@
 import React, {Component} from 'react';
 import {Segment, Header, Input, Button, List} from 'semantic-ui-react';
-import { Todos } from '../models/todos';
+import TodoItem from '../components/TodoItem';
+import {connect} from 'react-redux';
+import {ActionCreators as TodoAction} from '../reducer/todo';
 
-const Style={
-    done: {
-        textDecoration:'line-through'
-    }
-}
-
-export default class TodoList extends Component {
+class TodoList extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            todos: [],
             input: ''
         }
-    }
-
-    addTodo = () => {
-        const {todos, input} = this.state;
-        if(input === '')
-            return;
-            
-        todos.push(new Todos(input));
-        this.setState({
-            todos:todos,
-            input:''
-        });
-    }
-
-    toggleDones = (idx) => {
-        const {todos} = this.state;
-        todos[idx].done = !todos[idx].done;
-        this.setState({
-            todos:todos
-        });
     }
 
     onInputChange = (evt)=> {
@@ -44,7 +19,9 @@ export default class TodoList extends Component {
     }
     
     render() {
-        const {todos, input} = this.state;
+        const {input} = this.state;
+        const {todos, addTodo, toggleTodo} = this.props;
+        console.log(todos);
         return(
             <Segment.Group>
                 <Segment>
@@ -54,20 +31,11 @@ export default class TodoList extends Component {
                     <List divided selection size='huge'>
                         {todos.map((item, idx) => {
                             return (
-                                <List.Item
-                                    style={item.done? Style.done:{}}
-                                >
-                                    <Button
-                                    floated='left'
-                                    basic = {!item.done}
-                                    color = {item.done && 'teal'}
-                                    onClick={()=>{this.toggleDones(idx)}}
-                                    size='big'
-                                    >
-                                    Done
-                                    </Button>
-                                    {item.todo}
-                                </List.Item>
+                                <TodoItem
+                                    item={item}
+                                    // toggle={this.toggleDones}
+                                    toggle={()=>{toggleTodo(idx)}}
+                                />
                                 )
                         })}
                     </List>
@@ -81,7 +49,7 @@ export default class TodoList extends Component {
                     placeholder='new Todos...'
                     action={
                             <Button
-                            onClick={()=>{this.addTodo();}}
+                            onClick={()=>{addTodo(input);}}
                             primary
                             >send</Button>
                         }
@@ -91,3 +59,17 @@ export default class TodoList extends Component {
         );
     }
 }
+
+const mapStateToProps = (state) => {
+    console.log('mapstatetopropscalled');
+    return {
+        todos: state.todos
+    }
+}
+
+const mapDispatchToParam = (dispatch) => ({
+    addTodo: (msg) => {dispatch(TodoAction.addTodo(msg))},
+    toggleTodo: (idx) => {dispatch(TodoAction.toggleTodo(idx))}
+});
+
+export default connect(mapStateToProps, mapDispatchToParam)(TodoList);
