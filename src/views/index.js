@@ -12,6 +12,19 @@ class TodoList extends Component {
         }
     }
 
+    onKeyPress = (e) => {
+        if(e.which === 27) {
+            this.setState({
+                input: ''
+            });
+        } else if (e.which === 13) {
+            this.props.addTodo(e.target.value);
+            this.setState({
+                input: ''
+            });
+        }   
+    }
+
     onInputChange = (evt)=> {
         this.setState({
             input: evt.target.value
@@ -53,6 +66,7 @@ class TodoList extends Component {
                             primary
                             >send</Button>
                         }
+                    onKeyDown={(e)=>{this.onKeyPress(e)}}
                     />
                 </Segment>
             </Segment.Group>
